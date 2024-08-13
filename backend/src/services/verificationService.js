@@ -1,7 +1,8 @@
 import fetch from 'node-fetch';
+import { API_URL } from '../config';
 
 export const verifyDocument = async (PIN, ExamType, ExamYear, CandidateNo, ExamName) => {
-  const url = 'https://verify.waeconline.org.ng/Home/InstantResultVerification'; // Replace with actual URL
+  const url = API_URL;
   const response = await fetch(url, {
     method: 'POST',
     headers: {

@@ -1,8 +1,15 @@
 /* src/styles/App.css */
 body {
-  font-family: 'Roboto', sans-serif;
-  background-color: #f5f5f5;
-  color: #333;
+  font-family: 'Merriweather', sans-serif;
+  background-color: rgba(0, 0, 0, 0);
+  background-position-x: 0%;
+  background-position-y: 0%;
+  background-repeat: repeat;
+  background-attachment: scroll;
+  background-image: linear-gradient(45deg, rgb(54, 0, 51), rgb(11, 135, 147));
+  background-size: auto;
+  background-origin: padding-box;
+  background-clip: border-box;
 }
 
 .App-header {
