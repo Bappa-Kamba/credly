@@ -80,21 +80,8 @@ function App() {
                 required
               />
             </div>
-            <div className="form-group mb-4">
-              <label htmlFor="ExamType" className="f-15">Exam Type*</label>
-              <select
-                id="ExamType"
-                value={ExamType}
-                name={ExamName}
-                onChange={examTypeHandler}
-                required
-              >
-                <option value="">Select Exam Type</option>
-                <option value="1">WASSCE (For School Candidates)</option>
-                <option value="2">WASSCE (For Private Candidates)</option>
-              </select>
-            </div>
-            <div className="form-group mb-4">
+            <div className="form-group mb-4" style={'display:flex; flex-direction: row'}>
+                   <div >
               <label htmlFor="ExamYear" className="f-15">Exam Year*</label>
               <select
                 id="ExamYear"
@@ -108,6 +95,24 @@ function App() {
                 })}
               </select>
             </div>
+            <div>
+
+          
+              <label htmlFor="ExamType" className="f-15">Exam Type*</label>
+              <select
+                id="ExamType"
+                value={ExamType}
+                name={ExamName}
+                onChange={examTypeHandler}
+                required
+              >
+                <option value="">Select Exam Type</option>
+                <option value="1">WASSCE (For School Candidates)</option>
+                <option value="2">WASSCE (For Private Candidates)</option>
+              </select>
+                </div>
+            </div>
+       
             <div className="form-group mb-4">
               <label htmlFor="CandidateNo" className="f-15">Exam Number*</label>
               <input
