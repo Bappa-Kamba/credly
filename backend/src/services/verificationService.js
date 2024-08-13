@@ -1,5 +1,5 @@
 import fetch from 'node-fetch';
-import { API_URL } from '../config';
+import { API_URL } from '../config.js';
 
 export const verifyDocument = async (PIN, ExamType, ExamYear, CandidateNo, ExamName) => {
   const url = API_URL;
