@@ -1,0 +1,72 @@
+/* src/styles/App.css */
+body {
+  font-family: 'Roboto', sans-serif;
+  background-color: #f5f5f5;
+  color: #333;
+}
+
+.App-header {
+  font-family: 'Georgia', serif;
+  font-size: 2rem;
+  text-align: center;
+  margin-bottom: 1rem;
+}
+
+.success {
+  color: green;
+  font-size: 1.2em;
+  margin-top: 10px;
+}
+
+.centered-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 20px; /* Adjust spacing as needed */
+}
+
+.loading-spinner {
+  text-align: center;
+}
+
+/* Button Styles */
+button {
+  background-color: #3498db; /* Primary color */
+  color: #fff; /* Text color */
+  border: none; /* Remove border */
+  padding: 10px 20px; /* Padding for size */
+  font-size: 16px; /* Font size */
+  border-radius: 5px; /* Rounded corners */
+  cursor: pointer; /* Pointer cursor on hover */
+  transition: background-color 0.3s ease, transform 0.2s ease; /* Smooth transition for hover effects */
+}
+
+button:hover {
+  background-color: #2980b9; /* Darker shade on hover */
+}
+
+button:active {
+  transform: scale(0.98); /* Slight scale down on click */
+}
+
+button:disabled {
+  background-color: #BDC3C7; /* Gray color for disabled state */
+  cursor: not-allowed; /* Indicate button cannot be clicked */
+}
+
+.error {
+  color: red;
+  font-size: 1.2em;
+  margin-top: 10px;
+  text-align: center;
+  width: 100%;
+
+}
+
+.result {
+  margin-top: 1rem;
+  padding: 1rem;
+  background: #e9ecef;
+  border-radius: 4px;
+}
