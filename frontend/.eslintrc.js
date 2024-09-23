@@ -26,8 +26,8 @@ module.exports = {
     'react-hooks',
   ],
   rules: {
-    'react/jsx-filename-extension': [1, { extensions: ['.jsx'] }],
-    'react/jsx-one-expression-per-line': [1, { allow: 'single-child' }],
+    'react/jsx-filename-extension': [1, { extensions: ['.js', '.jsx'] }],
+    'react/jsx-one-expression-per-line': 'off',
     'react/jsx-no-undef': 1,
     'react/self-closing-comp': 1,
     'jsx-a11y/label-has-associated-control': [2, {
@@ -35,7 +35,13 @@ module.exports = {
     }],
     'no-use-before-define': [2, { functions: false, classes: true }],
     'comma-dangle': [2, 'always-multiline'],
-    // Other custom rules
+    'react/prop-types': 'off',
+    'react/button-has-type': 'off',
+    'react/function-component-definition': 'off',
+    'no-multiple-empty-lines': ['error', { max: 2, maxEOF: 0 }],
+    'no-trailing-spaces': 'warn',
+    'no-nested-ternary': 'warn',
+    'linebreak-style': 'off',
+    'eol-last': ['error', 'always'],
   },
 };
-
