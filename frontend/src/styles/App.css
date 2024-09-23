@@ -1,22 +1,17 @@
-/* src/styles/App.css */
+/* Global styles */
 body {
   font-family: 'Merriweather', sans-serif;
   background-color: rgba(0, 0, 0, 0);
-  background-position-x: 0%;
-  background-position-y: 0%;
-  background-repeat: repeat;
-  background-attachment: scroll;
   background-image: linear-gradient(45deg, rgb(54, 0, 51), rgb(11, 135, 147));
   background-size: auto;
-  background-origin: padding-box;
-  background-clip: border-box;
 }
 
 .App-header {
   font-family: 'Georgia', serif;
-  font-size: 2rem;
+  font-size: 1rem;
   text-align: center;
   margin-bottom: 1rem;
+  color: #BDC3C7;
 }
 
 .success {
@@ -25,41 +20,8 @@ body {
   margin-top: 10px;
 }
 
-.centered-container {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  margin-bottom: 20px; /* Adjust spacing as needed */
-}
-
 .loading-spinner {
   text-align: center;
-}
-
-/* Button Styles */
-button {
-  background-color: #3498db; /* Primary color */
-  color: #fff; /* Text color */
-  border: none; /* Remove border */
-  padding: 10px 20px; /* Padding for size */
-  font-size: 16px; /* Font size */
-  border-radius: 5px; /* Rounded corners */
-  cursor: pointer; /* Pointer cursor on hover */
-  transition: background-color 0.3s ease, transform 0.2s ease; /* Smooth transition for hover effects */
-}
-
-button:hover {
-  background-color: #2980b9; /* Darker shade on hover */
-}
-
-button:active {
-  transform: scale(0.98); /* Slight scale down on click */
-}
-
-button:disabled {
-  background-color: #BDC3C7; /* Gray color for disabled state */
-  cursor: not-allowed; /* Indicate button cannot be clicked */
 }
 
 .error {
@@ -68,7 +30,6 @@ button:disabled {
   margin-top: 10px;
   text-align: center;
   width: 100%;
-
 }
 
 .result {
@@ -77,3 +38,110 @@ button:disabled {
   background: #e9ecef;
   border-radius: 4px;
 }
+
+
+.fulfilling-bouncing-circle-spinner, .fulfilling-bouncing-circle-spinner * {
+      box-sizing: border-box;
+    }
+
+    .fulfilling-bouncing-circle-spinner {
+      height: 60px;
+      width: 60px;
+      position: relative;
+      animation: fulfilling-bouncing-circle-spinner-animation infinite 4000ms ease;
+    }
+
+    .fulfilling-bouncing-circle-spinner .orbit {
+      height: 60px;
+      width: 60px;
+      position: absolute;
+      top: 0;
+      left: 0;
+      border-radius: 50%;
+      border: calc(60px * 0.03) solid #ff1d5e;
+      animation: fulfilling-bouncing-circle-spinner-orbit-animation infinite 4000ms ease;
+    }
+
+    .fulfilling-bouncing-circle-spinner .circle {
+      height: 60px;
+      width: 60px;
+      color: #ff1d5e;
+      display: block;
+      border-radius: 50%;
+      position: relative;
+      border: calc(60px * 0.1) solid #ff1d5e;
+      animation: fulfilling-bouncing-circle-spinner-circle-animation infinite 4000ms ease;
+      transform: rotate(0deg) scale(1);
+    }
+
+    @keyframes fulfilling-bouncing-circle-spinner-animation {
+      0% {
+        transform: rotate(0deg);
+      }
+
+      100% {
+        transform: rotate(360deg);
+      }
+    }
+
+    @keyframes fulfilling-bouncing-circle-spinner-orbit-animation {
+      0% {
+        transform: scale(1);
+      }
+      50% {
+        transform: scale(1);
+      }
+      62.5% {
+        transform: scale(0.8);
+      }
+      75% {
+        transform: scale(1);
+      }
+      87.5% {
+        transform: scale(0.8);
+      }
+      100% {
+        transform: scale(1);
+      }
+    }
+
+    @keyframes fulfilling-bouncing-circle-spinner-circle-animation {
+      0% {
+        transform: scale(1);
+        border-color: transparent;
+        border-top-color: inherit;
+      }
+      16.7% {
+        border-color: transparent;
+        border-top-color: initial;
+        border-right-color: initial;
+      }
+      33.4% {
+        border-color: transparent;
+        border-top-color: inherit;
+        border-right-color: inherit;
+        border-bottom-color: inherit;
+      }
+      50% {
+        border-color: inherit;
+        transform: scale(1);
+      }
+      62.5% {
+        border-color: inherit;
+        transform: scale(1.4);
+      }
+      75% {
+        border-color: inherit;
+        transform: scale(1);
+        opacity: 1;
+      }
+      87.5% {
+        border-color: inherit;
+        transform: scale(1.4);
+      }
+      100% {
+        border-color: transparent;
+        border-top-color: inherit;
+        transform: scale(1);
+      }
+    }
