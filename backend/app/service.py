@@ -2,7 +2,7 @@ import requests
 from urllib.parse import urlencode, urlparse, parse_qs
 from flask import jsonify
 from .parser import parse_html_response
-from config import WAEC_DIRECT, WAEC_ONLINE
+from config import WAEC_DIRECT, NECO
 
 html_content = '''
 <html xmlns="http://www.w3.org/1999/xhtml"><head><script language="javascript">
@@ -318,7 +318,7 @@ def make_request_url(base_url, params):
     return f"{base_url}?{query_string}"
 
 
-def verify_document(CandidateNo, ExamYear, pin, ExamName, serial):
+def verify_waec(CandidateNo, ExamYear, pin, ExamName, serial):
     try:
         # Construct the request URL
         params = {
@@ -378,7 +378,8 @@ def handle_response(response, redirect_url=None):
             "success": True,
             "content": {
                 "title": "WAECDIRECT ONLINE - RESULTS",
-                "message": parse_html_response(response.text)
+                "message": parse_html_response(response.text),
+                "verified": True,
             }
         }), 200
     
@@ -391,9 +392,59 @@ def verify_document_dummy():
         "content": {
             "title": "WAECDIRECT ONLINE - RESULTS",
             "message": parse_html_response(html_content),
+            "verified": True,
         }
 
     }), 200
+
+
+def verify_neco_result(CandidateNo, ExamYear, pin, ExamName):
+    try:
+        # Construct the request URL
+        #  exam_year=2024&exam_type=ssce_int&reg_no=2410018877GI&token=528492244243
+        params = {
+            'reg_no': CandidateNo,
+            'exam_year': ExamYear,
+            'token': pin,
+            'exam_type': ExamName,
+        }
+        url = make_request_url(NECO, params)
+        print(url)
+
+        headers = {
+            "Accept": "*/*",
+            "Access-Control-Allow-Origin": "*",
+        }
+
+        # Make the GET request with allow_redirects=False to capture redirects
+        response = requests.get(url, headers=headers, allow_redirects=False)
+        if response.status_code != 200:
+            return jsonify({
+                "http_code": response.status_code,
+                "success": False,
+                "content": {
+                    "error_title": "Request Failed",
+                    "error_message": response.json()
+                }
+            }), response.status_code        
+        
+        return jsonify({
+            "http_code": response.status_code,
+            "success": True,
+            "content": {
+                "title": "NECO RESULTS",
+                "message": response.json()
+            }
+        }), 200
+    except Exception as e:
+        return jsonify({
+            "http_code": 500,
+            "success": False,
+            "content": {
+                "error_title": "Request Exception",
+                "error_message": str(e)
+            }
+        }), 500
 
 
 def parse_failed_request(redirect_url):

@@ -8,6 +8,6 @@ verification_routes = Blueprint('verification_routes', __name__)
 def verify_waec():
     return waec_request_handler(request)
 
-@verification_routes.route('/neco', methods=['POST'])
+@verification_routes.route('/neco', methods=['GET', 'POST'])
 def verify_neco():
     return neco_request_handler(request)

@@ -1,5 +1,5 @@
 from flask import jsonify
-from .service import verify_document, verify_document_dummy
+from .service import verify_waec, verify_neco_result, verify_document_dummy
 from .validate_info import validate
 import re
 
@@ -7,7 +7,7 @@ import re
 def validate_request(data):
     """Function to validate the incoming data"""
     required_fields = ['PIN', 'ExamType', 'ExamYear', 'CandidateNo',
-                       'ExamName', 'Name', 'CentreName', 'subjects']
+                       'ExamName', 'Name', 'subjects']
 
     # Check for missing fields
     missing_fields = [
@@ -104,4 +104,54 @@ def waec_request_handler(request):
 
 def neco_request_handler(request):
     """ Function to handle NECO requests """
-    pass
+    try:
+        data = request.json
+
+        # Validate the incoming data
+        is_valid, validation_error = validate_request(data)
+        if not is_valid:
+            # Return 400 for validation errors
+            return jsonify({"error": validation_error}), 400
+
+        # Extract validated fields
+        pin = data['PIN']
+        ExamYear = data['ExamYear']
+        CandidateNo = data['CandidateNo']
+        ExamName = data['ExamName']
+
+        # Call the verify_document function
+        result, status_code = verify_neco_result(
+            CandidateNo, ExamYear, pin, ExamName
+        )
+
+        # Check if validation was successful
+        if status_code == 200:
+            # Extract the parsed data from the result
+            parsed_data = result.get_json()['content']['message']
+
+            return jsonify({
+                "success": True,
+                "content": parsed_data,
+            }), status_code
+
+        else:
+            error = result.get_json()['content']['error_message']['info']
+            message = result.get_json()['content']['error_message']['message']
+            return jsonify({
+                "success": False,
+                "message": message,
+                "content": error,
+            }), status_code
+
+    except ValueError as ve:
+        print(f"ValueError in request_handler: {ve}")
+        # Handle data format issues
+        return jsonify({"error": "Invalid data format"}), 400
+    except TypeError as te:
+        print(f"TypeError in request_handler: {te}")
+        # Handle type errors
+        return jsonify({"error": "Type error occurred"}), 400
+    except Exception as e:
+        print(f"Error in request_handler: {e}")
+        # Catch-all for server errors
+        return jsonify({"error": "An unexpected error occurred"}), 500

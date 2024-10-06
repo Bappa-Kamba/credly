@@ -2,8 +2,6 @@ def compare_candidate_info(user_data, parsed_data):
     user_info = {
         "Examination Number": user_data.get('CandidateNo'),
         "Candidate's Name": user_data.get('Name').upper(),
-        "Examination": f"WASSCE FOR SCHOOL CANDIDATES {user_data.get('ExamYear')}",
-        "Centre": user_data.get('CentreName').upper()
     }
 
     # Return detailed comparison, showing which fields matched or mismatched
