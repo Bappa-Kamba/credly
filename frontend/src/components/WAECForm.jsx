@@ -89,7 +89,7 @@ const WAEC = ({
 
   const handleSubmit = (event) => {
     event.preventDefault();
-  
+
     if (!validateForm()) {
       return;
     }

@@ -35,25 +35,28 @@ function App() {
     'COMPUTER STUDIES',
     'CIVIC EDUCATION',
     'MARKETING',
-    'Add Subject',
-  ];
+  ].sort();
 
-  const handleSubmit = async (event, formData) => {
+  const handleSubmit = async (event, formData, formType) => {
     event.preventDefault();
     setResult(null);
     setIsLoading(true);
     setIsModalOpen(true);
 
+    const url = formType === 'WAEC'
+      ? 'http://localhost:5000/api/waec'
+      : 'http://localhost:5000/api/neco';
+
     try {
-      const response = await fetch('http://localhost:5000/api/waec', {
+      const response = await fetch(url, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
+          Authorization: 'Bearer Dummy.Auth.Token',
         },
         body: JSON.stringify(formData),
       });
       const data = await response.json();
-      console.log(data);
       setResult(data);
     } catch (err) {
       toast.error('Verification failed. Please try again.');
@@ -85,8 +88,9 @@ function App() {
                 <li>Click on the &ldquo;Verify Result&rdquo; button.</li>
                 <li>View your verified result.</li>
               </ul>
-              <div className="mt-8">
-                <p className="font-semibold">Support mail: support@credly.com</p>
+              <div className="mt-8 flex">
+                <svg width="52" height="52" viewBox="0 0 52 52" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M25.9998 0.166504C11.7398 0.166504 0.166504 11.7398 0.166504 25.9998C0.166504 40.2598 11.7398 51.8332 25.9998 51.8332C40.2598 51.8332 51.8332 40.2598 51.8332 25.9998C51.8332 11.7398 40.2598 0.166504 25.9998 0.166504ZM39.5623 28.0923C39.5623 28.5315 39.5365 28.9448 39.4848 29.3582C39.0973 33.9307 36.3848 36.204 31.4248 36.204H30.7532C30.3398 36.204 29.9265 36.4107 29.6682 36.7465L27.6273 39.459C26.7232 40.6732 25.2765 40.6732 24.3723 39.459L22.3315 36.7465C22.099 36.4623 21.6082 36.204 21.2465 36.204H20.5748C15.1757 36.204 12.4373 34.8607 12.4373 28.0665V21.2723C12.4373 16.3123 14.7365 13.5998 19.2832 13.2123C19.6965 13.1865 20.1357 13.1865 20.5748 13.1865H31.4248C36.824 13.1865 39.5623 15.899 39.5623 21.324V28.0923Z" fill="white" /></svg>
+                <h3 className="text-base font-semibold">Support mail: support@credly.com</h3>
               </div>
             </div>
 
@@ -118,14 +122,14 @@ function App() {
                 </div>
               ) : activeForm === 'WAEC' ? (
                 <WAEC
-                  onSubmit={handleSubmit}
+                  onSubmit={(event, formData) => handleSubmit(event, formData, 'WAEC')}
                   isLoading={isLoading}
                   subjectsList={subjectsList}
                   examTypeOptions={examTypeOptions}
                 />
               ) : (
                 <NECO
-                  onSubmit={handleSubmit}
+                  onSubmit={(event, formData) => handleSubmit(event, formData, 'NECO')}
                   isLoading={isLoading}
                   subjectsList={subjectsList}
                   examTypeOptions={examTypeOptions}
@@ -137,7 +141,11 @@ function App() {
       </main>
 
       <Modal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)}>
-        {isLoading ? <LoadingSpinner /> : result ? <ResultComponent result={result} /> : null}
+        {isLoading ? (
+          <LoadingSpinner />
+        ) : (
+          result ? <ResultComponent result={result} /> : null
+        )}
       </Modal>
 
       <footer className="bg-green-600 text-white py-4 px-4 text-center mt-8">
