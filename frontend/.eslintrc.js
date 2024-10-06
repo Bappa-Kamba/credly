@@ -40,7 +40,7 @@ module.exports = {
     'react/function-component-definition': 'off',
     'no-multiple-empty-lines': ['error', { max: 2, maxEOF: 0 }],
     'no-trailing-spaces': 'warn',
-    'no-nested-ternary': 'warn',
+    'no-nested-ternary': 'off',
     'linebreak-style': 'off',
     'eol-last': ['error', 'always'],
   },
