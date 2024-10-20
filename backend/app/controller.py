@@ -1,5 +1,10 @@
 from flask import jsonify
-from .service import verify_waec, verify_neco_result, verify_document_dummy
+from .service import (
+    verify_waec_result,
+    verify_neco_result,
+    verify_document_dummy,
+    verify_neco_dummy
+)
 from .validate_info import validate
 import re
 
@@ -20,8 +25,8 @@ def validate_request(data):
         return False, "PIN must be a number between 10 and 20 digits."
 
     # Validate CandidateNo (should be numeric and of appropriate length)
-    if len(data['CandidateNo']) != 10 or not data['CandidateNo'].isdigit():
-        return False, "Candidate number must be 10 digits."
+    if len(data['CandidateNo']) not in range(10, 21):
+        return False, "Candidate number must be between 10 and 15 digits."
 
     # Validate ExamYear (should be a valid year)
     str_exam_year = str(data['ExamYear'])
@@ -120,19 +125,37 @@ def neco_request_handler(request):
         ExamName = data['ExamName']
 
         # Call the verify_document function
-        result, status_code = verify_neco_result(
-            CandidateNo, ExamYear, pin, ExamName
+        result, status_code = verify_neco_dummy(
+            # CandidateNo, ExamYear, pin, ExamName
         )
+
 
         # Check if validation was successful
         if status_code == 200:
             # Extract the parsed data from the result
             parsed_data = result.get_json()['content']['message']
+            print(parsed_data)
 
-            return jsonify({
-                "success": True,
-                "content": parsed_data,
-            }), status_code
+            validated_data = validate(data, parsed_data)
+            print(validated_data)
+
+            if validated_data['Info Match'] and \
+                    validated_data['Subj Match']:
+                return jsonify({
+                    "success": True,
+                    "content": parsed_data,
+                }), status_code
+            else:
+                # If there are mismatches, return the mismatches in the response
+                return jsonify({
+                    "success": True,
+                    "mismatch": True,
+                    "content": parsed_data,
+                    "mismatches": {
+                        "Info Mismatches": validated_data['Info Mismatches'],
+                        "Subj Mismatches": validated_data['Subj Mismatches'],
+                    }
+                }), 422  # Use 422 Unprocessable Entity for mismatches
 
         else:
             error = result.get_json()['content']['error_message']['info']

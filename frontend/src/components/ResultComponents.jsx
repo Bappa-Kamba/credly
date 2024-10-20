@@ -1,6 +1,24 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { toast } from 'react-toastify';
+import { CheckCircle, AlertTriangle } from 'lucide-react';
+
+// Custom Alert component
+const Alert = ({ children, variant = 'default', icon: Icon }) => {
+  const variantClasses = {
+    default: 'bg-gray-100 border-gray-500 text-gray-700',
+    success: 'bg-green-100 border-green-500 text-green-700',
+    warning: 'bg-yellow-100 border-yellow-500 text-yellow-700',
+    error: 'bg-red-100 border-red-500 text-red-700',
+  };
+
+  return (
+    <div className={`border-l-4 p-4 ${variantClasses[variant]} flex items-start`}>
+      {Icon && <Icon className="h-5 w-5 mr-3 mt-0.5" />}
+      <div>{children}</div>
+    </div>
+  );
+};
 
 function ResultComponent({ result }) {
   const {
@@ -9,103 +27,113 @@ function ResultComponent({ result }) {
 
   if (!success) {
     toast.error(content);
-    // return (
-    //   <div className="result w-full bg-red-100 border-l-4 border-red-500 p-4 mb-6">
-    //     <h2 className="text-2xl text-center font-bold mb-2 text-black">Error ❌</h2>
-    //     <p className="text-xl text-center text-red-700">{content}</p>
-    //   </div>
-    // );
-  } else {
-    return (
-      <div className="result w-full">
-        <h2 className="text-3xl font-bold mb-6 text-center text-gray-800">
-          Verification Result
-        </h2>
-        {!mismatch && (
-          <div className="bg-green-100 border-l-4 border-green-500 p-4 mb-6">
-            <h2 className="text-2xl text-center font-bold mb-2 text-black">Verified ✅</h2>
-          </div>
-        )}
+    return null;
+  }
 
-        {/* Render Candidate Information */}
-        {content.candidate_info && (
-          <div className="mb-6">
-            <h3 className="text-2xl font-semibold mb-3 text-gray-800">Candidate Information</h3>
-            <ul className="space-y-2">
-              {Object.entries(content.candidate_info).map(([key, value]) => {
-                const hasMismatch = mismatches['Info Mismatches'] && mismatches['Info Mismatches'][key];
-                return (
-                  <li
-                    key={key}
-                    className="flex"
-                    style={{
-                      backgroundColor: hasMismatch ? '#FB0C0B' : '#20DF22',
-                    }}
-                  >
-                    <span className="font-medium w-1/3">{key}:</span>
-                    <span className="w-2/3">
-                      {hasMismatch ? mismatches['Info Mismatches'][key].received : value}
-                      {hasMismatch && (
-                        <span className="text-sm block">
+  return (
+    <div className="result w-full max-w-3xl mx-auto">
+      <h2 className="text-3xl font-bold mb-6 text-center text-gray-800">
+        Verification Result
+      </h2>
+      {!mismatch && (
+        <Alert variant="success" icon={CheckCircle}>
+          <h3 className="font-semibold">Verified</h3>
+          <p>All information has been successfully verified.</p>
+        </Alert>
+      )}
+
+      {mismatch && (
+        <Alert variant="warning" icon={AlertTriangle}>
+          <h3 className="font-semibold">Verification Issues Detected</h3>
+          <p>
+            Some information do not match our records.
+            Please review the highlighted discrepancies.
+          </p>
+        </Alert>
+      )}
+
+      {/* Render Candidate Information */}
+      {content.candidate_info && (
+        <div className="mb-6">
+          <h3 className="text-2xl font-semibold mb-3 text-gray-800">Candidate Information</h3>
+          <ul className="space-y-2 bg-white shadow rounded-lg overflow-hidden">
+            {Object.entries(content.candidate_info).map(([key, value]) => {
+              const hasMismatch = mismatches['Info Mismatches'] && mismatches['Info Mismatches'][key];
+              return (
+                <li
+                  key={key}
+                  className={`flex p-3 ${hasMismatch ? 'bg-red-50' : 'bg-green-50'}`}
+                >
+                  <span className="font-medium w-1/3 text-gray-700">{key}:</span>
+                  <span className="w-2/3">
+                    {hasMismatch ? (
+                      <>
+                        <span className="text-red-600">{mismatches['Info Mismatches'][key].received}</span>
+                        <span className="text-sm block text-gray-500">
                           Expected: {mismatches['Info Mismatches'][key].expected}
                         </span>
-                      )}
-                    </span>
-                  </li>
-                );
-              })}
-            </ul>
-          </div>
-        )}
+                      </>
+                    ) : (
+                      <span className="text-green-600">{value}</span>
+                    )}
+                  </span>
+                </li>
+              );
+            })}
+          </ul>
+        </div>
+      )}
 
-        {/* Render Subject Grades */}
-        {content.subject_grades && content.subject_grades.length > 0 && (
-          <div className="mb-6">
-            <h3 className="text-2xl font-semibold mb-3 text-gray-800">Subject Grades</h3>
-            <ul className="grid grid-cols-2 gap-2">
-              {content.subject_grades.map((subject) => {
-                const hasMismatch = mismatches['Subj Mismatches'] && mismatches['Subj Mismatches'][subject.subject];
-                return (
-                  <li
-                    key={subject.subject}
-                    className="flex justify-between p-2 rounded"
-                    style={{
-                      backgroundColor: hasMismatch ? '#FB0C0B' : '#20DF22',
-                    }}
-                  >
-                    <span className="font-medium">{subject.subject}:</span>
-                    <span>
-                      {hasMismatch ? mismatches['Subj Mismatches'][subject.subject].received : subject.grade}
-                      {hasMismatch && (
-                        <span className="text-sm block">
+      {/* Render Subject Grades */}
+      {content.subject_grades && content.subject_grades.length > 0 && (
+        <div className="mb-6">
+          <h3 className="text-2xl font-semibold mb-3 text-gray-800">Subject Grades</h3>
+          <ul className="grid grid-cols-2 gap-3">
+            {content.subject_grades.map((subject) => {
+              const hasMismatch = mismatches['Subj Mismatches'] && mismatches['Subj Mismatches'][subject.subject];
+              return (
+                <li
+                  key={subject.subject}
+                  className={`flex justify-between p-3 rounded-lg ${
+                    hasMismatch ? 'bg-red-50' : 'bg-green-50'
+                  }`}
+                >
+                  <span className="font-medium text-gray-700">{subject.subject}:</span>
+                  <span>
+                    {hasMismatch ? (
+                      <>
+                        <span className="text-red-600">{mismatches['Subj Mismatches'][subject.subject].received}</span>
+                        <span className="text-sm block text-gray-500">
                           Expected: {mismatches['Subj Mismatches'][subject.subject].expected}
                         </span>
-                      )}
-                    </span>
-                  </li>
-                );
-              })}
-            </ul>
-          </div>
-        )}
-
-        {/* Render Card Information */}
-        {content.card_info && (
-          <div className="mb-6">
-            <h3 className="text-2xl font-semibold mb-3 text-gray-800">Card Information</h3>
-            <ul className="space-y-2">
-              {Object.entries(content.card_info).map(([key, value]) => (
-                <li key={key} className="flex">
-                  <span className="font-medium w-1/3">{key}:</span>
-                  <span className="w-2/3">{value}</span>
+                      </>
+                    ) : (
+                      <span className="text-green-600">{subject.grade}</span>
+                    )}
+                  </span>
                 </li>
-              ))}
-            </ul>
-          </div>
-        )}
-      </div>
-    );
-  }
+              );
+            })}
+          </ul>
+        </div>
+      )}
+
+      {/* Render Card Information */}
+      {content.card_info && (
+        <div className="mb-6">
+          <h3 className="text-2xl font-semibold mb-3 text-gray-800">Card Information</h3>
+          <ul className="space-y-2 bg-white shadow rounded-lg overflow-hidden">
+            {Object.entries(content.card_info).map(([key, value]) => (
+              <li key={key} className="flex p-3 bg-blue-50">
+                <span className="font-medium w-1/3 text-gray-700">{key}:</span>
+                <span className="w-2/3 text-blue-600">{value}</span>
+              </li>
+            ))}
+          </ul>
+        </div>
+      )}
+    </div>
+  );
 }
 
 ResultComponent.propTypes = {

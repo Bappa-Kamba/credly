@@ -1,7 +1,7 @@
 import requests
 from urllib.parse import urlencode, urlparse, parse_qs
 from flask import jsonify
-from .parser import parse_html_response
+from .parser import parse_html_response, parse_neco_response
 from config import WAEC_DIRECT, NECO
 
 html_content = '''
@@ -244,72 +244,55 @@ $(document).on("contextmenu",function(e){
 
 '''
 
-
-# def verify_document(CandidateNo, ExamYear, pin, ExamType, ExamName):
-#     try:
-#         url = WAEC_ONLINE
-#         payload = {
-#             'CandidateNo': CandidateNo,
-#             'ExamYear': ExamYear,
-#             'PIN': pin,
-#             'ExamType': ExamType,
-#             'ExamName': ExamName
-#         }
-#         headers = {
-#             "Accept": "*",
-#             "Content-Type": "application/json; charset=UTF-8",
-#             "Cookie": ".AspNetCore.Antiforgery.9fXoN5jHCXs=\
-# CfDJ8Pfi2sjgrQBGuyW0BXK5RzrKB193pTw08cwUnckfd8_j23bBM6FWnOUpqKaBfjy2OB1ad32i0L\
-# FkKsw3hvDmGryGZh8Z9Vfs-UGNVtYr5YmaUHMecZmxh_GwHdhoHes_70M29KbnVwiJiKhoMpFg3P8; \
-# .AspNetCore.Session=CfDJ8Pfi2sjgrQBGuyW0BXK5Rzr6x%2FEnQpelItItVZ3Rf5t8aQCO3H9LY\
-# hYCKtF84l4gRP%2BxyaLajnZt7rdn6NWmKEi9pgXw0ii9HiyhVIKtNDPXnx4t5p1nFi5YWSsmMMlqSGM\
-# ClrV1vM0OjsA30TcjDWhytlSJ1nYAiC%2Bcxz459TN1; ARRAffinity=7a687400452d1a720c8b2d81\
-# 56ae999df967e4cc3e1a9918a18310365c8a69ca; ARRAffinitySameSite=7a687400452d1a720c8b\
-# 2d8156ae999df967e4cc3e1a9918a18310365c8a69ca",
-#             "Access-Control-Allow-Origin": "*",
-#         }
-
-#         # Make the POST request
-#         payload_str = json.dumps(payload)
-#         response = requests.post(url, data=payload_str, headers=headers)
-#         response.raise_for_status()  # Raises an exception for 4xx/5xx errors
-
-#         # Determine the response type based on the Content-Type header
-#         content_type = response.headers.get('Content-Type')
-#         print(response.headers)
-#         print(response.status_code)
-#         print(response.json())
-#         print(response.text)
-        
-
-#         # If the response is JSON
-#         if 'application/json' in content_type:
-#             json_data = response.json()
-
-#             # Check for an error in the JSON response
-#             if json_data.get('state') != 1:  # Assuming -1 indicates an error
-#                 error_msg = json_data.get('msg', 'An unknown error occurred.')
-#                 return jsonify({"error": error_msg}), 400
-#             else:
-#                 return jsonify({
-#                     "html": response.text,
-#                     "json": response.json(),
-#                 }), 200
-
-#         # If the response is HTML
-#         elif 'text/html' in content_type:
-#             html_reponse = response.text
-
-#             # Return the HTML content as a string
-#             print(html_reponse)
-#             return jsonify({"html": html_reponse}), 200
-
-#         # Handle unexpected content types
-#         return jsonify({"error": "Unexpected response format"}), 400
-
-#     except requests.RequestException as e:
-#         print(f"Error in verify_document: {str(e)}")
-#         return jsonify({"error": "Verification failed"}), 500
+neco_content = {
+    "content": {
+        "barcode": "iVBORw0KGgoAAAANSUhEUgAAAGQAAABkAQAAAABYmaj5AAAA7UlEQVR42tXUu42EMBAG4B85cEgDlmjDmVvCDRiugd2WnLkNJBqwMwfWzc0+dEtihvBuIr4E/fMA0KEy/rAyEByViEFSoTZbMyZ+kBRNQPMJ/oJmi+WaljSVKyJ+/X7/JOuK+/PJ+E+3XT2qNn+YYE8ZBjw2u99FOZWtokqyrAlug1Zfkqiqb7SgX/2dKm7BqRVmkFTqlLHnd+pTRUBjjK8sp0rTClrtVERF4ytPzSySuErl5hRJ4t3O+rHeQRLfS7C8W1VEPa+Vs4wX5KO66fdXJYgwu82L4ruODfhN1tXzrreAw5V39F/+YEf9AOeknEkMPpt/AAAAAElFTkSuQmCC",
+        "biometrics": None,
+        "candidate_number": None,
+        "centre_code": "0310101",
+        "centre_name": "GREAT HEIGHTS ACADEMY KADO ESTATE, ABUJA.",
+        "debt": None,
+        "dob": "10/01/2007",
+        "exam_type": "INTERNAL",
+        "exam_year": "2024",
+        "full_name": "SANUSI FATIMA BUBA",
+        "gender": "F",
+        "id": 34354874,
+        "num_of_sub": 9,
+        "reason": None,
+        "reg_number": "2410018877GI",
+        "show_dob": True,
+        "show_photo": True,
+        "sub1_grade": "B3",
+        "sub1_name": "English Language",
+        "sub1_remark": "GOOD",
+        "sub2_grade": "E8",
+        "sub2_name": "General Mathematics",
+        "sub2_remark": "PASS",
+        "sub3_grade": "B2",
+        "sub3_name": "Civic Education",
+        "sub3_remark": "VERY GOOD",
+        "sub4_grade": "A1",
+        "sub4_name": "Agricultural Science",
+        "sub4_remark": "EXCELLENT",
+        "sub5_grade": "B3",
+        "sub5_name": "Islamic Studies",
+        "sub5_remark": "GOOD",
+        "sub6_grade": "B3",
+        "sub6_name": "Government",
+        "sub6_remark": "GOOD",
+        "sub7_grade": "C4",
+        "sub7_name": "Economics",
+        "sub7_remark": "CREDIT",
+        "sub8_grade": "C4",
+        "sub8_name": "Literature in English",
+        "sub8_remark": "CREDIT",
+        "sub9_grade": "B2",
+        "sub9_name": "Catering Craft Practice",
+        "sub9_remark": "VERY GOOD"
+    },
+    "success": True
+}
 
 
 # Helper function to build the request URL
@@ -318,7 +301,7 @@ def make_request_url(base_url, params):
     return f"{base_url}?{query_string}"
 
 
-def verify_waec(CandidateNo, ExamYear, pin, ExamName, serial):
+def verify_waec_result(CandidateNo, ExamYear, pin, ExamName, serial):
     try:
         # Construct the request URL
         params = {
@@ -397,6 +380,16 @@ def verify_document_dummy():
 
     }), 200
 
+def verify_neco_dummy():
+    return jsonify({
+        "http_code": 200,
+        "success": True,
+        "content": {
+            "title": "NECO RESULTS",
+            "message": parse_neco_response(neco_content["content"]),
+            "verified": True,
+        }
+    }), 200
 
 def verify_neco_result(CandidateNo, ExamYear, pin, ExamName):
     try:
@@ -426,14 +419,14 @@ def verify_neco_result(CandidateNo, ExamYear, pin, ExamName):
                     "error_title": "Request Failed",
                     "error_message": response.json()
                 }
-            }), response.status_code        
+            }), response.status_code     
         
         return jsonify({
             "http_code": response.status_code,
             "success": True,
             "content": {
                 "title": "NECO RESULTS",
-                "message": response.json()
+                "message": parse_neco_response(response.json()['content'])
             }
         }), 200
     except Exception as e:

@@ -1,23 +1,30 @@
 import React, { useState } from 'react';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faArrowLeft } from '@fortawesome/free-solid-svg-icons';
+// import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+// import { faArrowLeft } from '@fortawesome/free-solid-svg-icons';
 import Modal from './Modal';
 import LoadingSpinner from './LoadingSpinner';
 import ResultComponent from './ResultComponents';
-import WAEC from './WAECForm';
-import NECO from './NECOForm';
+import Form from './Form';
 
 function App() {
   const [result, setResult] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [activeForm, setActiveForm] = useState(null);
+  const [selectedForm, setSelectedForm] = useState('WAEC');
 
-  const examTypeOptions = {
+  const WAECExamTypeOptions = {
     1: 'MAY/JUN',
     2: 'NOV/DEC',
+  };
+
+  const NECOExamTypeOptions = {
+    1: 'ssce_int',
+    2: 'ssce_ext',
+    3: 'ncee',
+    4: 'bece',
+    5: 'gifted',
   };
 
   const subjectsList = [
@@ -34,7 +41,11 @@ function App() {
     'AGRICULTURAL SCIENCE',
     'COMPUTER STUDIES',
     'CIVIC EDUCATION',
+    'DATA PROCESSING',
     'MARKETING',
+    'ISLAMIC STUDIES',
+    'CHRISTIAN RELIGIOUS STUDIES',
+    'CATERING CRAFT PRACTICE',
   ].sort();
 
   const handleSubmit = async (event, formData, formType) => {
@@ -96,45 +107,36 @@ function App() {
 
             <div className="w-full md:w-3/5 bg-white p-8">
               <h2 className="text-2xl font-bold text-gray-800 mb-6">Check Result</h2>
-              {activeForm && (
+              <div className="flex flex-col sm:flex-row justify-center mb-6 py-3 bg-white rounded-md shadow-md overflow-hidden">
                 <button
-                  onClick={() => setActiveForm(null)}
-                  className="mt-4 text-blue-600 hover:text-blue-400"
-                  aria-label="Go back"
+                  className={`p-3 mb-2 sm:mb-0 sm:mr-3 border rounded-md w-full sm:w-auto transition-colors duration-200 ${
+                    selectedForm === 'WAEC'
+                      ? 'bg-green-500 text-white'
+                      : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
+                  }`}
+                  onClick={() => setSelectedForm('WAEC')}
                 >
-                  <FontAwesomeIcon icon={faArrowLeft} className="w-8 h-8" />
+                  WAEC
                 </button>
-              )}
-              {!activeForm ? (
-                <div className="space-y-4 md:w-2/5">
-                  <button
-                    onClick={() => setActiveForm('WAEC')}
-                    className="w-full bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 transition duration-300"
-                  >
-                    Verify WAEC
-                  </button>
-                  <button
-                    onClick={() => setActiveForm('NECO')}
-                    className="w-full bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700 transition duration-300"
-                  >
-                    Verify NECO
-                  </button>
-                </div>
-              ) : activeForm === 'WAEC' ? (
-                <WAEC
-                  onSubmit={(event, formData) => handleSubmit(event, formData, 'WAEC')}
-                  isLoading={isLoading}
-                  subjectsList={subjectsList}
-                  examTypeOptions={examTypeOptions}
-                />
-              ) : (
-                <NECO
-                  onSubmit={(event, formData) => handleSubmit(event, formData, 'NECO')}
-                  isLoading={isLoading}
-                  subjectsList={subjectsList}
-                  examTypeOptions={examTypeOptions}
-                />
-              )}
+                <button
+                  className={`p-3 border rounded-md w-full sm:w-auto transition-colors duration-200 ${
+                    selectedForm === 'NECO'
+                      ? 'bg-green-500 text-white'
+                      : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
+                  }`}
+                  onClick={() => setSelectedForm('NECO')}
+                >
+                  NECO
+                </button>
+              </div>
+              <Form
+                onSubmit={(event, formData) => handleSubmit(event, formData, selectedForm)}
+                isLoading={isLoading}
+                subjectsList={subjectsList}
+                examTypeOptions={selectedForm === 'WAEC' ? WAECExamTypeOptions : NECOExamTypeOptions}
+                form={selectedForm}
+              />
+
             </div>
           </div>
         </div>

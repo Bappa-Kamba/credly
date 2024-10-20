@@ -2,8 +2,8 @@ import React, { useState } from 'react';
 import { toast } from 'react-toastify';
 import { v4 as uuidv4 } from 'uuid';
 
-const WAEC = ({
-  onSubmit, isLoading, subjectsList, examTypeOptions,
+const Form = ({
+  onSubmit, isLoading, subjectsList, examTypeOptions, form,
 }) => {
   const currentYear = new Date().getFullYear();
   const [PIN, setPIN] = useState('');
@@ -17,6 +17,8 @@ const WAEC = ({
   const [subjects, setSubjects] = useState(
     Array.from({ length: 9 }, () => ({ id: uuidv4(), subject: '', grade: '' })),
   );
+  // const [newSubject, setNewSubject] = useState('');
+  // const [newGrade, setNewGrade] = useState('');
 
   const inputClassName = 'mt-1 block w-full px-3 py-2 bg-white border border-slate-300 rounded-md text-sm shadow-sm placeholder-slate-400 focus:outline-none focus:border-sky-500 focus:ring-1 focus:ring-sky-500';
   const selectClassName = 'mt-1 block w-full px-3 py-2 bg-white border border-slate-300 rounded-md text-sm shadow-sm focus:outline-none focus:border-sky-500 focus:ring-1 focus:ring-sky-500';
@@ -29,22 +31,23 @@ const WAEC = ({
     ));
   };
 
-  const handleCustomSubject = (id) => {
-    const newSubjectName = prompt('Please enter a new subject:');
-    if (newSubjectName && newSubjectName.trim()) {
-      handleSubjectChange(id, 'subject', newSubjectName.trim());
-    }
-  };
-
   const handleSelectChange = (id, e) => {
     const { name, value } = e.target;
-
-    if (name === 'subject' && value === 'Add Subject') {
-      handleCustomSubject(id);
-    } else {
-      handleSubjectChange(id, name, value);
-    }
+    handleSubjectChange(id, name, value);
   };
+
+  // const addCustomSubject = () => {
+  //   if (newSubject && newGrade) {
+  //     setSubjects((prevSubjects) => [...prevSubjects, {
+  //       id: uuidv4(), subject: newSubject, grade: newGrade,
+  //     }]);
+  //     handleSelectChange();
+  //     setNewSubject(''); // Clear the input after adding
+  //     setNewGrade(''); // Clear the grade input
+  //   } else {
+  //     toast.error('Please fill both subject and grade before adding.');
+  //   }
+  // };
 
   const getAvailableSubjects = (currentSubjectId) => {
     const selectedSubjects = subjects
@@ -63,7 +66,7 @@ const WAEC = ({
     const errors = [];
 
     if (!PIN) errors.push('PIN');
-    if (!serial) errors.push('Serial Number');
+    if (form === 'WAEC' && !serial) errors.push('Serial Number');
     if (!Name) errors.push('Name');
     if (!ExamType) errors.push('Exam Type');
     if (!ExamYear) errors.push('Exam Year');
@@ -93,22 +96,30 @@ const WAEC = ({
     if (!validateForm()) {
       return;
     }
-    toast.success('Request sent!');
-    onSubmit(event, {
+
+    // Create the form data
+    const formData = {
       PIN,
       ExamType,
       ExamYear,
       CandidateNo,
       ExamName,
-      serial,
       Name,
       subjects,
       CentreName,
-    });
+    };
+
+    // Add serial only if the form is WAEC
+    if (form === 'WAEC') {
+      formData.serial = serial;
+    }
+
+    toast.success('Request sent!');
+    onSubmit(event, formData, form);
   };
 
   return (
-    <div className="bg-white rounded-lg shadow-lg overflow-hidden">
+    <div className="">
       <form onSubmit={handleSubmit} noValidate className="p-6 space-y-6">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div>
@@ -123,18 +134,20 @@ const WAEC = ({
               className={inputClassName}
             />
           </div>
-          <div>
-            <label htmlFor="serial" className="block text-sm font-bold text-gray-800 mb-1">Serial No*</label>
-            <input
-              type="text"
-              id="serial"
-              value={serial}
-              onChange={(e) => setSerial(e.target.value)}
-              placeholder="Serial Number"
-              required
-              className={inputClassName}
-            />
-          </div>
+          {form === 'WAEC' && (
+            <div>
+              <label htmlFor="serial" className="block text-sm font-bold text-gray-800 mb-1">Serial No*</label>
+              <input
+                type="text"
+                id="serial"
+                value={serial}
+                onChange={(e) => setSerial(e.target.value)}
+                placeholder="Serial Number"
+                required
+                className={inputClassName}
+              />
+            </div>
+          )}
         </div>
         <div>
           <label htmlFor="Name" className="block text-sm font-bold text-gray-800 mb-1">Name*</label>
@@ -159,8 +172,9 @@ const WAEC = ({
               className={selectClassName}
             >
               <option value="">Select Exam Type*</option>
-              <option value="1">MAY/JUN</option>
-              <option value="2">NOV/DEC</option>
+              {Object.entries(examTypeOptions).map(([key, value]) => (
+                <option key={key} value={key}>{value}</option>
+              ))}
             </select>
           </div>
           <div>
@@ -230,7 +244,7 @@ const WAEC = ({
                   className={`w-1/3 ${selectClassName}`}
                 >
                   <option value="">Grade</option>
-                  {['A1', 'B2', 'B3', 'C4', 'C5', 'C6', 'D7', 'E8', 'F9'].map((grade) => (
+                  {['N/A', 'A1', 'B2', 'B3', 'C4', 'C5', 'C6', 'D7', 'E8', 'F9'].map((grade) => (
                     <option key={grade} value={grade}>{grade}</option>
                   ))}
                 </select>
@@ -238,15 +252,45 @@ const WAEC = ({
             ))}
           </div>
         </div>
+        {/* <div className="mt-4">
+          <h4 className="text-md font-bold text-gray-700 mb-2">Add Custom Subject</h4>
+          <div className="flex space-x-2">
+            <input
+              type="text"
+              placeholder="Subject"
+              value={newSubject}
+              onChange={(e) => setNewSubject(e.target.value)}
+              className={`w-1/2 ${inputClassName}`}
+            />
+            <select
+              value={newGrade}
+              onChange={(e) => setNewGrade(e.target.value)}
+              className={`w-1/4 ${selectClassName}`}
+            >
+              <option value="">Grade</option>
+              {['N/A', 'A1', 'B2', 'B3', 'C4', 'C5', 'C6', 'D7', 'E8', 'F9'].map((grade) => (
+                <option key={grade} value={grade}>{grade}</option>
+              ))}
+            </select>
+            <button
+              type="button"
+              onClick={addCustomSubject}
+              className="w-1/6 bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600
+              transition duration-300 shadow-md font-bold"
+            >
+              Add
+            </button>
+          </div>
+        </div> */}
         <button
           type="submit"
           className="w-full bg-blue-500 text-white px-4 py-3 rounded-md hover:bg-blue-600 transition duration-300 shadow-md font-bold"
         >
-          {isLoading ? 'Validating...' : 'Check Result'}
+          {isLoading ? 'Validating...' : 'Verify Result'}
         </button>
       </form>
     </div>
   );
 };
 
-export default WAEC;
+export default Form;

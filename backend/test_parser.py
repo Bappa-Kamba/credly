@@ -1,4 +1,5 @@
-from app.parser import parse_html_response
+from app.parser import parse_html_response, parse_neco_response
+
 
 # Example of using the parser in the app
 html_content = '''
@@ -241,12 +242,63 @@ $(document).on("contextmenu",function(e){
 </body></html>
 
 '''
-parsed_data = parse_html_response(html_content)
+
+neco_result = {
+    "content": {
+        "barcode": "iVBORw0KGgoAAAANSUhEUgAAAGQAAABkAQAAAABYmaj5AAAA7UlEQVR42tXUu42EMBAG4B85cEgDlmjDmVvCDRiugd2WnLkNJBqwMwfWzc0+dEtihvBuIr4E/fMA0KEy/rAyEByViEFSoTZbMyZ+kBRNQPMJ/oJmi+WaljSVKyJ+/X7/JOuK+/PJ+E+3XT2qNn+YYE8ZBjw2u99FOZWtokqyrAlug1Zfkqiqb7SgX/2dKm7BqRVmkFTqlLHnd+pTRUBjjK8sp0rTClrtVERF4ytPzSySuErl5hRJ4t3O+rHeQRLfS7C8W1VEPa+Vs4wX5KO66fdXJYgwu82L4ruODfhN1tXzrreAw5V39F/+YEf9AOeknEkMPpt/AAAAAElFTkSuQmCC",
+        "biometrics": None,
+        "candidate_number": None,
+        "centre_code": "0310101",
+        "centre_name": "GREAT HEIGHTS ACADEMY KADO ESTATE, ABUJA.",
+        "debt": None,
+        "dob": "10/01/2007",
+        "exam_type": "INTERNAL",
+        "exam_year": "2024",
+        "full_name": "SANUSI FATIMA BUBA",
+        "gender": "F",
+        "id": 34354874,
+        "num_of_sub": 9,
+        "reason": None,
+        "reg_number": "2410018877GI",
+        "show_dob": True,
+        "show_photo": True,
+        "sub1_grade": "B3",
+        "sub1_name": "English Language",
+        "sub1_remark": "GOOD",
+        "sub2_grade": "E8",
+        "sub2_name": "General Mathematics",
+        "sub2_remark": "PASS",
+        "sub3_grade": "B2",
+        "sub3_name": "Civic Education",
+        "sub3_remark": "VERY GOOD",
+        "sub4_grade": "A1",
+        "sub4_name": "Agricultural Science",
+        "sub4_remark": "EXCELLENT",
+        "sub5_grade": "B3",
+        "sub5_name": "Islamic Studies",
+        "sub5_remark": "GOOD",
+        "sub6_grade": "B3",
+        "sub6_name": "Government",
+        "sub6_remark": "GOOD",
+        "sub7_grade": "C4",
+        "sub7_name": "Economics",
+        "sub7_remark": "CREDIT",
+        "sub8_grade": "C4",
+        "sub8_name": "Literature in English",
+        "sub8_remark": "CREDIT",
+        "sub9_grade": "B2",
+        "sub9_name": "Catering Craft Practice",
+        "sub9_remark": "VERY GOOD"
+    },
+    "success": True
+}
+
+
+parsed_data = parse_neco_response(neco_result["content"])
 
 # Access the parsed information
 candidate_info = parsed_data['candidate_info']
 subject_grades = parsed_data['subject_grades']
-card_info = parsed_data['card_info']
 
 print(parsed_data)
 
@@ -258,7 +310,3 @@ for key, value in candidate_info.items():
 print("\nSubject Grades:")
 for item in subject_grades:
     print(f"{item['subject']}: {item['grade']}")
-
-print("\nCard Information:")
-for key, value in card_info.items():
-    print(f"{key}: {value}")
