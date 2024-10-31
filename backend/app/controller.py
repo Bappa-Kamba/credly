@@ -36,6 +36,43 @@ def validate_request(data):
     return True, None
 
 
+def generate_mismatch_response(user_data, parsed_data, validated_data, exam_type="WAEC"):
+    """
+    Utility function to handle mismatches in response, while converting 
+    user_data to match the parsed_data structure for frontend compatibility.
+    """
+    
+    # Transform user_data subjects to the format of parsed_data['subject_grades']
+    transformed_user_subjects = [
+        {"subject": sub['subject'], "grade": sub['grade']}
+        for sub in user_data.get('subjects', [])
+    ]
+    
+    # Include additional subjects from parsed_data that are missing in user_data
+    parsed_subject_names = {sub['subject'] for sub in parsed_data['subject_grades']}
+    for subject in transformed_user_subjects:
+        if subject['subject'] not in parsed_subject_names:
+            subject['grade'] = "N/A"  # Mark missing subjects with "N/A"
+    
+    # Reconstruct the content with the transformed user data structure
+    content = {
+        "candidate_info": parsed_data['candidate_info'],
+        "subject_grades": transformed_user_subjects,
+    }
+    if exam_type == 'WAEC':
+        content["card_info"] = parsed_data['card_info']
+
+    return jsonify({
+        "success": True,
+        "mismatch": True,
+        "content": content,
+        "mismatches": {
+            "Info Mismatches": validated_data['Info Mismatches'],
+            "Subj Mismatches": validated_data['Subj Mismatches'],
+        }
+    }), 422
+
+
 def waec_request_handler(request):
     """ Function to handle WAEC requests """
     try:
@@ -66,7 +103,7 @@ def waec_request_handler(request):
 
             # Validate the user data against the parsed data
             validated_data = validate(data, parsed_data)
-            print(validated_data)
+            # print(validated_data)
 
             if validated_data['Info Match'] and \
             validated_data['Subj Match']:
@@ -75,16 +112,7 @@ def waec_request_handler(request):
                     "content": parsed_data,
                 }), status_code
             else:
-                # If there are mismatches, return the mismatches in the response
-                return jsonify({
-                    "success": True,
-                    "mismatch": True,
-                    "content": parsed_data,
-                    "mismatches": {
-                        "Info Mismatches": validated_data['Info Mismatches'],
-                        "Subj Mismatches": validated_data['Subj Mismatches'],
-                    }
-                }), 422  # Use 422 Unprocessable Entity for mismatches
+                return generate_mismatch_response(data, parsed_data, validated_data)
 
         else:
             error = result.get_json()['content']['error_message']
@@ -134,10 +162,8 @@ def neco_request_handler(request):
         if status_code == 200:
             # Extract the parsed data from the result
             parsed_data = result.get_json()['content']['message']
-            print(parsed_data)
 
             validated_data = validate(data, parsed_data)
-            print(validated_data)
 
             if validated_data['Info Match'] and \
                     validated_data['Subj Match']:
@@ -146,16 +172,7 @@ def neco_request_handler(request):
                     "content": parsed_data,
                 }), status_code
             else:
-                # If there are mismatches, return the mismatches in the response
-                return jsonify({
-                    "success": True,
-                    "mismatch": True,
-                    "content": parsed_data,
-                    "mismatches": {
-                        "Info Mismatches": validated_data['Info Mismatches'],
-                        "Subj Mismatches": validated_data['Subj Mismatches'],
-                    }
-                }), 422  # Use 422 Unprocessable Entity for mismatches
+                return generate_mismatch_response(data, parsed_data, validated_data, "NECO")
 
         else:
             error = result.get_json()['content']['error_message']['info']

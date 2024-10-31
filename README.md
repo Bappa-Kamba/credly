@@ -1,6 +1,11 @@
 # Credly
 
-This repository contains both the frontend and backend for the Credential Verification System. The app allows users to verify educational credentials, such as WAEC and NECO certificates, through the backend API. The backend integrates with external services to validate the authenticity of these certificates, while the frontend provides a user-friendly interface for entering document details and viewing verification results. The system streamlines the verification process, ensuring accurate and efficient validation of documents.
+This repository contains both the frontend and backend for the Credential Verification System.
+The app allows users to verify educational credentials, such as WAEC and NECO certificates,
+through the backend API. The backend integrates with external services to validate the authenticity
+of these certificates, while the frontend provides a user-friendly interface for entering document
+details and viewing verification results. The system streamlines the verification process,
+ensuring accurate and efficient validation of documents.
 
 ## Table of Contents
 

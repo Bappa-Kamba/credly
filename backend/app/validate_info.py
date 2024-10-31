@@ -30,9 +30,10 @@ def compare_subject_grades(user_data, parsed_data):
             - dict: A dictionary of mismatched subjects with their received and
                     expected grades.
     """
+    # Convert subjects to uppercase to make the comparison case-insensitive
     user_subjects = {sub['subject'].upper(): sub['grade']
                      for sub in user_data.get('subjects', [])}
-    parsed_subjects = {sub['subject'].upper(): sub['grade']
+    parsed_subjects = {sub['subject']: sub['grade']
                        for sub in parsed_data[:]}
 
     # Return detailed comparison, showing mismatched subjects and grades
@@ -46,6 +47,7 @@ def compare_subject_grades(user_data, parsed_data):
     }
 
     return len(mismatches) == 0, mismatches
+
 
 
 def validate(user_data, parsed_data):

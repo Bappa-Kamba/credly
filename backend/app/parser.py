@@ -124,11 +124,10 @@ def parse_neco_response(data):
         following structure:
             {
                 "candidate_info": {
-                    "full_name": str,
-                    "reg_number": str,
-                    "exam_year": str,
-                    "dob": str,
-                    "centre_code": str
+                    "Candidate's Name": str,
+                    "Examination Number": str,
+                    "Exam Year": str,
+                    "Centre": str,
                 },
                 "subject_grades": [
                     {
@@ -143,9 +142,7 @@ def parse_neco_response(data):
     candidate_info = {
         "Candidate's Name": data.get("full_name"),
         "Examination Number": data.get("reg_number"),
-        "exam_year": data.get("exam_year"),
-        "dob": data.get("dob"),
-        "centre_code": data.get("centre_code"),
+        "Exam Year": data.get("exam_year"),
         "Centre": data.get("centre_name")
     }
 
@@ -161,11 +158,10 @@ def parse_neco_response(data):
             if subject_name == 'Literature in English':
                 subject_name = 'Literature'
             subjects.append({
-                "subject": subject_name,
-                "grade": subject_grade
+                "subject": subject_name.upper(),
+                "grade": subject_grade.upper(),
             })
     subjects.sort(key=lambda x: x['subject'])
-    print(subjects)
 
     return {
         "candidate_info": candidate_info,

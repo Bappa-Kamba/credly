@@ -28,10 +28,6 @@ module.exports = {
     contentBase: path.join(__dirname, 'public'),
     compress: true,
     port: 3000,
-    setupMiddlewares: (middlewares, devServer) => {
-      // Custom middlewares can be added here
-      return middlewares;
-    },
+    setupMiddlewares: (middlewares) => middlewares,
   },
 };
-
