@@ -86,36 +86,39 @@ function ResultComponent({ result }) {
 
       {/* Render Subject Grades */}
       {content.subject_grades && content.subject_grades.length > 0 && (
-        <div className="mb-6">
-          <h3 className="text-2xl font-semibold mb-3 text-gray-800">Subject Grades</h3>
-          <ul className="grid grid-cols-2 gap-3">
-            {content.subject_grades.map((subject) => {
-              const hasMismatch = mismatches['Subj Mismatches'] && mismatches['Subj Mismatches'][subject.subject];
-              return (
-                <li
-                  key={subject.subject}
-                  className={`flex justify-between p-3 rounded-lg ${
-                    hasMismatch ? 'bg-red-50' : 'bg-green-50'
-                  }`}
-                >
-                  <span className="font-medium text-gray-700">{subject.subject}:</span>
-                  <span>
-                    {hasMismatch ? (
-                      <>
-                        <span className="text-red-600">{mismatches['Subj Mismatches'][subject.subject].received}</span>
-                        <span className="text-sm block text-gray-500">
-                          Expected: {mismatches['Subj Mismatches'][subject.subject].expected}
-                        </span>
-                      </>
-                    ) : (
-                      <span className="text-green-600">{subject.grade}</span>
-                    )}
-                  </span>
-                </li>
-              );
-            })}
-          </ul>
-        </div>
+      <div className="mb-6">
+        <h3 className="text-2xl font-semibold mb-3 text-gray-800">Subject Grades</h3>
+        <ul className="grid grid-cols-2 gap-3">
+          {content.subject_grades.map((subject) => {
+            const hasMismatch = mismatches['Subj Mismatches'] && mismatches['Subj Mismatches'][subject.subject];
+            const isNotApplicable = !!hasMismatch && mismatches['Subj Mismatches'][subject.subject].expected === 'N/A';
+            return (
+              <li
+                key={subject.subject}
+                className={`flex justify-between p-3 rounded-lg ${
+                  hasMismatch ? 'bg-red-50' : 'bg-green-50'
+                }`}
+              >
+                <span className="font-medium text-gray-700">{subject.subject}:</span>
+                <span>
+                  {isNotApplicable ? (
+                    <span className="text-yellow-600">Not Applicable</span>
+                  ) : hasMismatch ? (
+                    <>
+                      <span className="text-red-600">{mismatches['Subj Mismatches'][subject.subject].received}</span>
+                      <span className="text-sm block text-gray-500">
+                        Expected: {mismatches['Subj Mismatches'][subject.subject].expected}
+                      </span>
+                    </>
+                  ) : (
+                    <span className="text-green-600">{subject.grade}</span>
+                  )}
+                </span>
+              </li>
+            );
+          })}
+        </ul>
+      </div>
       )}
 
       {/* Render Card Information */}

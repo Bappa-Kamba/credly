@@ -4,12 +4,11 @@ import 'react-toastify/dist/ReactToastify.css';
 // import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 // import { faArrowLeft } from '@fortawesome/free-solid-svg-icons';
 import Modal from './Modal';
-import LoadingSpinner from './LoadingSpinner';
 import ResultComponent from './ResultComponents';
 import Form from './Form';
 
 function App() {
-  const [result, setResult] = useState(null);
+  const [result, setResult] = useState({});
   const [isLoading, setIsLoading] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedForm, setSelectedForm] = useState('WAEC');
@@ -52,7 +51,6 @@ function App() {
     event.preventDefault();
     setResult(null);
     setIsLoading(true);
-    setIsModalOpen(true);
 
     const url = formType === 'WAEC'
       ? 'http://localhost:5000/api/waec'
@@ -69,6 +67,7 @@ function App() {
       });
       const data = await response.json();
       setResult(data);
+      setIsModalOpen(true);
     } catch (err) {
       toast.error('Verification failed. Please try again.');
     } finally {
@@ -77,20 +76,11 @@ function App() {
   };
 
   return (
-    <div className="min-h-screen flex flex-col bg-green-500">
-      <header className="py-4 px-6 text-white">
-        <div className="container mx-auto flex justify-between items-center">
-          <div className="flex items-center">
-            <img src="/images/logo-wide.png" alt="Logo" />
-            <h1 className="text-3xl font-bold">Credly Results</h1>
-          </div>
-        </div>
-      </header>
-
+    <div className="min-h-screen flex flex-col bg-emerald-800">
       <main className="flex-grow container mx-auto px-4 py-8">
         <div className="bg-white rounded-lg shadow-lg overflow-hidden">
           <div className="flex flex-col md:flex-row">
-            <div className="w-full md:w-2/5 bg-green-500 text-white p-8">
+            <div className="w-full md:w-2/5 bg-emerald-800 text-white p-8">
               <h2 className="text-3xl font-bold mb-6">CREDLY RESULTS</h2>
               <h3 className="text-xl font-semibold mb-4">How it works:</h3>
               <ul className="list-disc list-inside space-y-2">
@@ -105,29 +95,73 @@ function App() {
               </div>
             </div>
 
-            <div className="w-full md:w-3/5 bg-white p-8">
-              <h2 className="text-2xl font-bold text-gray-800 mb-6">Check Result</h2>
-              <div className="flex flex-col sm:flex-row justify-center mb-6 py-3 bg-white rounded-md shadow-md overflow-hidden">
-                <button
-                  className={`p-3 mb-2 sm:mb-0 sm:mr-3 border rounded-md w-full sm:w-auto transition-colors duration-200 ${
-                    selectedForm === 'WAEC'
-                      ? 'bg-green-500 text-white'
-                      : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
-                  }`}
-                  onClick={() => setSelectedForm('WAEC')}
-                >
-                  WAEC
-                </button>
-                <button
-                  className={`p-3 border rounded-md w-full sm:w-auto transition-colors duration-200 ${
-                    selectedForm === 'NECO'
-                      ? 'bg-green-500 text-white'
-                      : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
-                  }`}
-                  onClick={() => setSelectedForm('NECO')}
-                >
-                  NECO
-                </button>
+            <div className="w-full md:w-3/5 bg-white p-6 mb-8">
+              <div className="flex flex-col sm:flex-row items-center gap-4 p-4 bg-white rounded-lg shadow-md">
+                {/* Logo Section */}
+                <div className="flex-shrink-0">
+                  {selectedForm === 'WAEC' ? (
+                    <img
+                      src="images/WAEC.png"
+                      alt="WAEC Logo"
+                      className="h-16 w-auto object-contain transition-transform duration-200 hover:scale-105"
+                    />
+                  ) : (
+                    <img
+                      src="images/NECO.png"
+                      alt="NECO Logo"
+                      className="h-16 w-auto object-contain transition-transform duration-200 hover:scale-105"
+                    />
+                  )}
+                </div>
+
+                {/* Buttons Container */}
+                <div className="flex flex-col sm:flex-row gap-3 flex-grow sm:justify-start">
+                  <button
+                    onClick={() => setSelectedForm('WAEC')}
+                    className={`
+                      px-6 py-3 rounded-lg font-medium text-sm
+                      transition-all duration-200 ease-in-out
+                      focus:outline-none focus:ring-2 focus:ring-offset-2
+                      ${
+                        selectedForm === 'WAEC'
+                          ? 'bg-emerald-600 text-white shadow-lg hover:bg-emerald-700 focus:ring-emerald-500'
+                          : 'bg-gray-100 text-gray-600 hover:bg-gray-200 hover:text-gray-700 focus:ring-gray-400'
+                      }
+                      transform hover:-translate-y-0.5 active:translate-y-0
+                      min-w-[120px]
+                    `}
+                  >
+                    <span className="flex items-center justify-center">
+                      WAEC
+                      {selectedForm === 'WAEC' && (
+                        <span className="ml-2 h-2 w-2 rounded-full bg-white" />
+                      )}
+                    </span>
+                  </button>
+
+                  <button
+                    onClick={() => setSelectedForm('NECO')}
+                    className={`
+                      px-6 py-3 rounded-lg font-medium text-sm
+                      transition-all duration-200 ease-in-out
+                      focus:outline-none focus:ring-2 focus:ring-offset-2
+                      ${
+                        selectedForm === 'NECO'
+                          ? 'bg-emerald-600 text-white shadow-lg hover:bg-emerald-700 focus:ring-emerald-500'
+                          : 'bg-gray-100 text-gray-600 hover:bg-gray-200 hover:text-gray-700 focus:ring-gray-400'
+                      }
+                      transform hover:-translate-y-0.5 active:translate-y-0
+                      min-w-[120px]
+                    `}
+                  >
+                    <span className="flex items-center justify-center">
+                      NECO
+                      {selectedForm === 'NECO' && (
+                        <span className="ml-2 h-2 w-2 rounded-full bg-white" />
+                      )}
+                    </span>
+                  </button>
+                </div>
               </div>
               <Form
                 onSubmit={(event, formData) => handleSubmit(event, formData, selectedForm)}
@@ -141,16 +175,10 @@ function App() {
           </div>
         </div>
       </main>
-
-      <Modal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)}>
-        {isLoading ? (
-          <LoadingSpinner />
-        ) : (
-          result ? <ResultComponent result={result} /> : null
-        )}
+      <Modal isOpen={isModalOpen} isLoading={isLoading} onClose={() => setIsModalOpen(false)}>
+        { result && <ResultComponent result={result} /> }
       </Modal>
-
-      <footer className="bg-green-600 text-white py-4 px-4 text-center mt-8">
+      <footer className=" text-white py-4 px-4 text-center mt-8">
         <p>&copy; 2024 Credly. All rights reserved.</p>
       </footer>
       <ToastContainer />

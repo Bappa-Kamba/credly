@@ -284,9 +284,59 @@ const Form = ({
         </div> */}
         <button
           type="submit"
-          className="w-full bg-blue-500 text-white px-4 py-3 rounded-md hover:bg-blue-600 transition duration-300 shadow-md font-bold"
+          disabled={isLoading}
+          className={`
+            relative w-full px-6 py-4 rounded-lg font-semibold text-base
+            transition-all duration-300 ease-in-out
+            focus:outline-none focus:ring-4 focus:ring-emerald-500/50
+            transform hover:-translate-y-0.5 active:translate-y-0
+            disabled:cursor-not-allowed disabled:transform-none
+            ${
+              isLoading
+                ? 'bg-emerald-600/80 text-emerald-100'
+                : 'bg-emerald-600 text-white hover:bg-emerald-700 active:bg-emerald-800'
+            }
+            shadow-lg hover:shadow-xl active:shadow-md
+            overflow-hidden
+          `}
         >
-          {isLoading ? 'Validating...' : 'Verify Result'}
+          {/* Button content container */}
+          <div className="flex items-center justify-center space-x-2">
+            {/* Loading spinner */}
+            {isLoading && (
+              <svg
+                className="animate-spin h-5 w-5 text-white"
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24"
+              >
+                <circle
+                  className="opacity-25"
+                  cx="12"
+                  cy="12"
+                  r="10"
+                  stroke="currentColor"
+                  strokeWidth="4"
+                />
+                <path
+                  className="opacity-75"
+                  fill="currentColor"
+                  d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                />
+              </svg>
+            )}
+            {/* Button text */}
+            <span className={`${isLoading ? 'opacity-90' : 'opacity-100'}`}>
+              {isLoading ? 'Validating...' : 'Verify Result'}
+            </span>
+          </div>
+
+          {/* Background animation effect */}
+          <div className={`
+            absolute inset-0 bg-gradient-to-r from-emerald-500/0 via-emerald-500/10 to-emerald-500/0
+            transform transition-transform duration-1000
+            ${isLoading ? 'translate-x-0 animate-shine' : '-translate-x-full'}`}
+          />
         </button>
       </form>
     </div>

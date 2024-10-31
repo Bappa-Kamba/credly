@@ -1,25 +1,26 @@
+/* eslint-disable jsx-a11y/control-has-associated-label */
 import React from 'react';
 
-const Modal = ({ isOpen, onClose, children }) => {
+const Modal = ({
+  isOpen, onClose, children,
+
+}) => {
   if (!children) {
     onClose();
   }
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4">
-      <div className="bg-white rounded-lg w-full max-w-4xl max-h-[90vh] overflow-y-auto">
+    <div className={`fixed inset-0 z-50 flex items-center justify-center ${isOpen ? 'visible' : 'invisible'}`}>
+      <div className="bg-white p-8 rounded-lg shadow-lg w-full max-w-4xl max-h-[90vh] overflow-y-auto">
         <div className="flex justify-end p-2">
-          <button
-            onClick={onClose}
-            className="p-3 rounded-lg"
-          >
-            ❌
+          <button onClick={onClose} className="text-gray-500 hover:text-gray-700">
+            <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+            </svg>
           </button>
         </div>
-        <div className="p-6">
-          {children}
-        </div>
+        { children }
       </div>
     </div>
   );
